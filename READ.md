@@ -2,5 +2,5 @@
 
 	- feature-A                      	
 	- fix-B
-	- featureC
+	- featureC!
 	
