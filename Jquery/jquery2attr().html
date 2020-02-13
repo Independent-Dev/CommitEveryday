@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jquery</title>
+        <link rel="stylesheet" href="index.css" type="text/css" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <h1 class = "jj" id = 'aa'>this work!!</h1>
+        <!-- <h1 class = "jj" id = 'ab'>this work either!!</h1> -->
+        <p>this work either!!<span></span></p>
+        <input type = "text"/>
+        <script>
+            $( document).ready(function(){
+                $( 'h1' ).attr('class', 'kk');
+                var hClass = $( 'h1' ).attr('class')
+                $('span').text(hClass);
+                $(':text').attr('placeholder', 'am i ready??').css('font-size', '100px');
+
+            });
+        </script>
+    </body>
+</html>

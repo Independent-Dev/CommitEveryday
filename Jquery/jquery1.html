@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jquery</title>
+        <link rel="stylesheet" href="index.css" type="text/css" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        <h1 class = "jj" id = 'aa'>this work!!</h1>
+        <!-- <h1 class = "jj" id = 'ab'>this work either!!</h1> -->
+        <p>this work either!!</p>
+        <script>
+            $(document).ready(function(){
+                // $('.jj').css('color', 'pink').css('font-style', 'italic');
+                // $(':contains("ei")').css('color', 'blue')
+                $('h1, p').css('color', 'pink');
+            });
+        </script>
+    </body>
+</html>
