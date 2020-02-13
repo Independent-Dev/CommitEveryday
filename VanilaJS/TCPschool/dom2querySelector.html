@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>querySelector</title>
+        <link rel="stylesheet" href="../index.css" type="text/css" />
+    </head>
+    <body>
+        <h1 id = 'ab'>Lorem</h1>
+        <script>
+            var jb = document.getElementById('ab');
+            for(var j = 0; j<3; j++){
+                
+                if(j==1){
+                    document.write("<div>")
+                    document.write(`<p class="ada">${j*3}</p>`)
+                    document.write("</div>")
+                }else document.write(`<p class="aaa">${j*3}</p>`)
+            }
+            for(var i = 0; i<3; i++){
+                document.getElementsByTagName('p')[i].style.color ='blue';
+            }
+            document.querySelector('div .aaa').style.color = 'yellow';
+            //위와 같이 쓰면 .aaa 또는 .ada인 첫 번째 태그에 접근
+        </script>
+    </body>
+</html>

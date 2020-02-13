@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JS</title>
+        <link rel="stylesheet" href="../index.css" type="text/css" />
+    </head>
+    <body>
+        <h1 id = 'ab'>Lorem</h1>
+        <script>
+            var jb = document.getElementById('ab');
+            document.write('<p>jb: '+ jb + '</p>');
+            document.write('<p>type of jb: '+ typeof jb + '</p>');
+            document.write('<p>jb.innerHTML :'+jb. innerHTML+'</p>');
+            for(var i = 0; i<document.getElementsByTagName('p').length; i++){
+                var ph = document.getElementsByTagName('p')[i];
+                ph.style.color ='blue';
+            }
+        </script>
+    </body>
+</html>

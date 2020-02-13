@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>color change!</title>
+        <link rel="stylesheet" href="index.css" type="text/css" />
+        <script>
+        function chcolor(event){
+            const title = document.getElementById('title');
+            if (title.style.color == 'blue'){
+                title.style.color = 'white';
+            }else title.style.color = 'blue';
+        }
+        </script>
+    </head>
+    <body>
+        <h1 id = 'title'>this work!!</h1>
+        <script>
+        const title = document.getElementById('title');
+        title.addEventListener('click', chcolor)
+        </script>
+    </body>
+</html>

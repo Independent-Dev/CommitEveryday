@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <title>label practice</title>
+    <script>    
+        const a = "4";
+        const a4 = "4"*4;
+        document.write(a4);
+        let c = 1;
+        c+=1;
+        document.write(c)
+
+    </script>
+</head>
+<body>
+    <h2>Let's GUGU!!</h2>
+    <h4>2~5단</h4>
+    <script>
+    gugudan:
+    for(var i = 2; i<10; i++){
+        dan:
+        for(var j = 2; j<10; j++){
+            if (i>5) break gugudan;
+            document.write(`${i} * ${j} = ${i*j} ///`)
+        }    
+        document.write("<br>")
+    }
+    </script>
+    <br>
+    <h4>짝수만!!</h4>
+    <script>
+    gugudan:
+    for(var i = 2; i<10; i++){
+        dan:
+        for(var j = 2; j<10; j++){
+            if ((i*j)%2==1) continue dan;
+            document.write(`${i} * ${j} = ${i*j} ///`);
+        }    
+        document.write("<br>")
+    }
+</script>
+</body>
+</html>

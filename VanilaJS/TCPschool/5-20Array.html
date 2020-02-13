@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <title>Array</title>
+    <script>    
+        let arr = [1, 2, 3, 4, 5];
+        document.write(arr+"<br><br>");
+        delete arr[2];
+        document.write(arr+"<br><br>");
+        arr[100] = 100;
+        document.write(arr+"<br><br>");
+        arr[0] = 100;
+        document.write(arr+"<br><br>");
+
+        //연관배열
+        var lel = []
+        lel['a'] = 'A'
+        lel['b'] = 'B'
+        lel['c'] = 'C'
+        for(a in lel){
+            document.write(lel[a]+"<br>");
+        }
+        for(x in lel){
+            document.write(lel[x]+"<br>");
+        }
+        
+
+    </script>
+</head>
+<body>
+</body>
+</html>

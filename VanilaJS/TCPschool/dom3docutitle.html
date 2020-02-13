@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>javascript</title>
+        <link rel="stylesheet" href="../index.css" type="text/css" />
+    </head>
+    <body>
+        <script>
+            function resizeAction(event){
+                const t1 = document.querySelector('#aaa');
+                t1.innerHTML += "   1";
+            }
+
+            function clickAction(event){
+                if(document.querySelector('#aaa').style.color =='white'){
+                    document.querySelector('#aaa').style.color = 'blue';
+                }else{
+                    document.querySelector('#aaa').style.color = 'white';
+                }
+            }
+            document.write(`<h1 id ="aaa">${document.title}</h1>`);
+            document.title = 'Coding Factory';
+            //타이틀에 접근할 수 있게 해주는 속성. 
+            window.addEventListener('resize', resizeAction);
+            const t2 = document.querySelector('#aaa');
+            t2.addEventListener('click', clickAction);
+
+        </script>
+    </body>
+</html>
