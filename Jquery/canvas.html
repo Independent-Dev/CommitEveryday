@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jquery</title>
+        <link rel="stylesheet" href="../VanilaJS/index.css" type="text/css" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+        <script>
+        signaturePad.on();
+        var canvas = document.querySelector("canvas");
+        var signaturePad = new SignaturePad(canvas);
+        const data = signaturePad.toData();// Draws signature image from an array of point groups
+        signaturePad.fromData(data);
+        </script>
+    </head>
+    <body>
+        <canvas id="tutorial" width="500" height="500" style="border: 1px dotted"></canvas>
+    </body>
+</html>

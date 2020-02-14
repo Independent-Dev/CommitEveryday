@@ -13,7 +13,13 @@
             $(document).ready(function(){
                 // $('.jj').css('color', 'pink').css('font-style', 'italic');
                 // $(':contains("ei")').css('color', 'blue')
-                $('h1, p').css('color', 'pink');
+                $('h1, p').css('color', 'pink');//이렇게 하면 굳이 add를 쓸 필요가 없음.
+                var aaa = $('.jj').text();
+                $('h1').slideToggle(10);
+                $('h1').slideToggle();
+                $('p').append(`<h1>${aaa}</h1>`);
+                
+
             });
         </script>
     </body>

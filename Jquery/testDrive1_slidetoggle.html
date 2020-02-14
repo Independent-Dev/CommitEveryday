@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>imageToggle</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>
+        $(document).ready(function(){
+            $(".aa").click(function(){
+                $('img').slideToggle();
+            });
+            $(".prac").click(function(){
+                alert('aaa');
+            });
+            
+        });
+        </script>
+    </head>
+    <body>
+        <button class = 'aa'>click here!!</button>
+        <img src="img/signature.png" style="border:1px dotted;">
+        <div>
+            <button class = 'prac'>click1</button>
+            <button class = 'prac'>click2</button>
+            <button class = 'prac'>click3</button>
+            <button class = 'prac'>click4</button>
+        </div>
+
+        
+    </body>
+</html>
