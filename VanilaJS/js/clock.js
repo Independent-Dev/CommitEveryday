@@ -5,8 +5,8 @@ function getTime(){
     const date = new Date();
     const minutes = date.getMinutes();
     const hours = date.getHours();
-    const seconds = date.getSeconds()
-    clockTitle.innerText = `${hours}:${minutes}:${seconds}`; 
+    const seconds = date.getSeconds();
+    clockTitle.innerText = `${hours}:${minutes}:${seconds < 10 ? `0${seconds}`: seconds}`; 
 }
 
 function init(){
@@ -14,3 +14,5 @@ function init(){
 }
 
 init();
+
+setInterval(getTime, 1000);
