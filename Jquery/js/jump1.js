@@ -28,7 +28,7 @@ function checkForCode(){
         var my_num = getRandom(5);
         discount = `<p>Your Discount is ${my_num}%</p>`;    
     }else {
-        discount = `<p>Sorry, no discount this time!</p>`;
+        discount = `<p><em>Sorry, no discount this time!</em></p>`;
         $('.guess_box').each(function(){
             if($.contains(this, document.getElementById('has_discount'))){
                 $(this).addClass("discount");
@@ -39,10 +39,15 @@ function checkForCode(){
         });
     }
     $(this).append(discount);
+    $('h2').replaceWith("<h4>Now you are done.</h1>");
+    $('#main').children()[3].remove();
 
     
 }
 
 function getRandom(number){
     return Math.floor(Math.random()*number);
+}
+for(var i = 0; i<10; i++){
+    $('#main').append(`<li>${i+1}</li>`);
 }

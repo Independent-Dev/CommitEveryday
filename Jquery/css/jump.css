@@ -33,3 +33,11 @@ img{
 .no_discount{
     border : solid #f00 3px;
 }
+
+li{
+    list-style-image: url('../img/menu.png');
+}
+.card{
+    float:none;
+    border: solid blue 2px;
+}

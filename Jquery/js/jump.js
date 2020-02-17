@@ -1,7 +1,7 @@
 var count = 0;
 $(document).ready(function(){
     $('.guess_box').click(function(){
-        $('li').remove();
+        //$('li').remove();
         var discount = Math.floor((Math.random()*5)+5);
         $(this).append(`<li>you clicked me!!</li>`);
         // $('.guess_box').unbind('click');

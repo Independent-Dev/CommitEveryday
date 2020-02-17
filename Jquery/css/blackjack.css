@@ -1,0 +1,43 @@
+#controls{
+    clear:both;
+}
+
+#main{
+    width: 835px;
+}
+
+#my_hand{
+    clear:both;
+    border: 1px solid gray;
+    height: 250px;
+    width: 835px;
+    overflow: scroll;
+}
+
+#my_hand div{
+    font-size: 30px;
+}
+
+h3{
+    display: inline;
+    padding-right: 40px;
+}
+
+.current_hand{
+    float:left;
+}
+
+#moreCard{
+    float: left;
+    height: 200px;
+    width: 200px;
+}
+
+#newGame{
+    float: right;
+    height: 200px;
+    width: 200px;
+}
+.bust{
+    float:left;
+}

@@ -1,0 +1,12 @@
+body{
+    width: 500px;
+}
+#save{
+    float:left;
+}
+#fileName{
+    float:left;
+}
+#clear{
+    float:right;
+}
