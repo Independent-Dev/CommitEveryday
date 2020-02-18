@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Menu in Restaurant</title>
+        <link rel="stylesheet" href="css/blackjack.css" type="text/css" />
+        <style>
+            .menu_entrees > li{
+                list-style-image: url('./img/menu.png');
+            }
+        </style>
+    </head>
+    <body>
+        <div class="topper">
+            <h2>Our Menu</h2>
+            <ul>
+                <button id="vegOn" style="display: inline;">Go Vegetarian</button>
+                <button id="restoreMe" style="display: inline;">Restore Menu</button>
+                <div id = "mode" style="display: inline;">For Everybody!!</div>
+            </ul>
+        </div>
+        <div id="menu_wrapper">
+            <div class="left-col">
+                <h4>Dinner Entrees</h4>
+                <ul class="menu_entrees">
+                    <li>Thai-style Halibut(fish)
+                        <ul>
+                            <li>coconut milk</li>
+                            <li class="fish">pan-fried halibut</li>
+                            <li>early autumn vegetables</li>
+                            <li>Thai spices</li>
+                        </ul>
+                    </li>
+                    <li>House Grilled Panini(meat)
+                        <ul>
+                            <li class="meat">prosciutto</li>
+                            <li>pan-fried halibut</li>
+                            <li>early autumn vegetables</li>
+                            <li>Thai spices</li>
+                        </ul>
+                    </li>
+                    <li>House Slider(Hamburger)
+                        <ul>
+                            <li class="hamburger">hamburger</li>
+                            <li>pan-fried halibut</li>
+                            <li>early autumn vegetables</li>
+                            <li>Thai spices</li>
+                        </ul>
+                    </li>
+                    <li>fritata(meat)
+                        <ul>
+                            <li class="meat">eggs</li>
+                            <li>pan-fried halibut</li>
+                            <li>early autumn vegetables</li>
+                            <li>Thai spices</li>
+                        </ul>
+                    </li>
+                    <li>Avocado Rolls
+                        <ul>
+                            <li>avocado</li>
+                            <li>pan-fried halibut</li>
+                            <li>early autumn vegetables</li>
+                            <li>Thai spices</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="js/DOM.js"></script>
+    </body>
+</html>

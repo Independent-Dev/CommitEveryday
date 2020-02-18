@@ -39,6 +39,7 @@ function hit(){
     usedCard[usedCard.length] = index;
     $('#my_hand').append("<div class='card'>"+c.suit+", "+c.value+"</div>");
     current_total+=c.value;
+    $('#hrdTotal').text(current_total);
 }
 
 function checkCurrentTotal(total){
@@ -56,6 +57,7 @@ function clearBoard(){
         var temp = usedCard[i];
         deck[temp].good_card = true;
         current_total = 0;
+        $('#hrdTotal').text(current_total);
     }
     init();
 }
