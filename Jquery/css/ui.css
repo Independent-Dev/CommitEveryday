@@ -1,0 +1,10 @@
+body{
+    background-color: coral;
+}
+.wrapper{
+    margin: 50px 20% 0 20%;
+    padding:30px;
+    height:100%;
+    background-color: white;
+    opacity: 70%;
+}

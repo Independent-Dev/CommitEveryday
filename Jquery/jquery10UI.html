@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>something</title>
+        <meta charset="utf-8" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="css/ui.css" />
+        
+    </head>
+    <body>
+        <div class="wrapper">
+            <h1>신비동물 목격 데이터</h1>
+        <hr><hr>
+        <form>
+            신비동물을 본 날짜: <br>
+            <input type='text' name='sighting_date' id="datepicker">
+            <br>
+            <br>
+            타입:<br>
+            <div id="type_select">
+                <input type="radio" id="radio1" name="creature_type" />
+                    <label for="radio1">츄파카브라</label>
+                <input type="radio" id="radio2" name="creature_type" />
+                    <label for="radio2">저지 데블</label>
+                <input type="radio" id="radio3" name="creature_type" />
+                    <label for="radio3">네스호 괴물</label>
+                <input type="radio" id="radio4" name="creature_type" />
+                    <label for="radio4">예티</label>
+                <input type="radio" id="radio5" name="creature_type" />
+                    <label for="radio5">기타</label>
+            </div>
+            <br>
+            <br>
+            무게:<input type="text" id="weight"><br>
+            <div id="slide_weight"></div>
+            <br>
+            키:<input type="text" id="height"><br>
+            <div id="slide_height"></div>
+            색상:
+            신비 동물의 위치데이터<br>
+            신비동물과의 거리:
+            위도:
+            경도:
+            <button>데이터 입력</button>
+        </form>
+        </div>
+        
+        
+        <link type ="text/css" href="jquery-ui-1.12.1.custom/jquery-ui.css" rel="stylesheet" />
+        <script src="jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+        <script src="js/jqueryUI.js"></script>
+    </body>
+</html>

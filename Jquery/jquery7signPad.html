@@ -3,17 +3,21 @@
     <head>
         <meta charset="utf-8"/>
         <title>signature_pad</title>
-        <link rel="stylesheet" href="css/bg.css" type="text/css" />
         <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
-        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <body>
         <div id = 'main'>
             <canvas id ="signature" width="500" height="500" style="border: 1px solid red;"></canvas>
         </div>
-        <button id="save">save as png</button>
+        <button id="download">download as png</button><button id="save">save as png</button>
         <input id ="fileName" type="text" />
+        <form action="/aaa.py" method="GET" id="form">
+            <input type="hidden" id="dataURL" name="dataURL">
+            <input type="hidden" id="userID" name="userID" value="">
+            <input type="hidden" id="fileName" name="fileName">
+        </form>
         <button id="clear">clear</button>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        
         <script src="js/signature.js"></script>
     </body>
 </html>
