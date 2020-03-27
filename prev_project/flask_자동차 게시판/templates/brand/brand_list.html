@@ -1,0 +1,203 @@
+{% extends "cpadmin.layout.popup.html" %}
+
+{% block title %}
+차량 브랜드 조회
+{% endblock %}
+
+{% block sub_scripts %}
+    {{ super() }}
+    <script>
+        //for paging
+        function go_to_page(page){
+            $('[data-page]').val(page);
+            $("[data-action-type]").val("search"); // 엑셀다운로드 후 페이징 이동 시, 엑셀다운로드 되지 않도록
+            $('[data-search-form]').submit();
+        }
+
+        $(document).ready(function(){
+            // function go_to_page(page)를 여기에서 선언할 경우에 "go_to_page is not defined at HTMLAnchorElement.onclick" 에러 발생.
+
+            // 전체 선택과 전체 선택 해제
+            $('[data-check-all]').click(function () {
+                if ($('[data-check-all]').is(":checked")) $('[data-checkbox-brand]').prop('checked', true);
+                else $('[data-checkbox-brand]').prop('checked', false).attr('check', false);
+            })
+
+            // 삭제 항목 submit 로직.
+            $('[data-car-brand-delete-btn]').click(function () {
+                if(!confirm('선택항목을 삭제하시겠습니까')){
+                    return false;
+                }
+                var form_tag = $("form[name='car_brand_list']");
+                var result_json = form_tag.ajax_form_submit_return_json();
+                if(result_json.success){
+                    alert("삭제되었습니다.");
+                    window.location.reload();
+                }else{
+                    // 서버에서 유효성 검사 한 결과
+                    $.each(JSON.parse(result_json["message"]),function(key,value) {
+                        alert(value);
+                    });
+                }
+            })
+
+            // 등록일 데이트피커(from)
+            $('[data-search-start-day]').datepicker({
+            dateFormat: "yy-mm-dd"
+            });
+
+            // 등록일 데이트피커(to)
+            $('[data-search-end-day]').datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+
+            // 차량 브랜드 정보 검색 또는 엑셀 다운로드.
+            $("[data-action-btn]").click(function(){
+                var option = $(this).attr('data-action-btn')
+
+                // 검색을 누른 경우
+                if(option=='search'){
+                    var startDate = $( "input[name='search_start_day']" ).val(); //2017-12-10
+                    var endDate = $( "input[name='search_end_day']" ).val(); //2017-12-0
+
+                    // 날짜 유효성 검사.
+                    if (!isNullEmpty(endDate) && !isNullEmpty(startDate)){
+                        var startDateArr = startDate.split('-');
+                        var endDateArr = endDate.split('-');
+                        var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
+                        var endDateCompare = new Date(endDateArr[0], parseInt(endDateArr[1])-1, endDateArr[2]);
+
+                        // 이전보다 이후의 날짜가 늦는 경우
+                        if(startDateCompare.getTime() > endDateCompare.getTime()) {
+                            alert("시작날짜와 종료날짜를 확인해 주세요.");
+                            return;
+                        }
+                    // 이전과 이후 가운데 하나만 없는 경우.
+                    }else if((!isNullEmpty(endDate) && isNullEmpty(startDate))||(isNullEmpty(endDate) && !isNullEmpty(startDate))){
+                        alert("폼을 완성해주세요.");
+                        return;
+                    }
+                }
+                document.search_form.action_type.value = option;
+                $('[data-per-page-submit]').val($('[data-per-page-select]').val());
+                document.search_form.submit();
+            });
+        });
+    </script>
+{%- endblock sub_scripts %}
+
+{% block content %}
+    <!--검색창-->
+    <h1>차량 브랜드 조회 </h1>
+    <div class="flagbox">
+        <form name="search_form" data-search-form>
+            <table>
+                <colgroup>
+                    <col width="10%" />
+                    <col width="30%" />
+                    <col width="10%" />
+                    <col width="15%" />
+                    <col width="5%" />
+                        <col width="15%" />
+                    <col />
+                </colgroup>
+                <tr>
+                    <th>
+                        <select name="search_option">
+                            <option value="">전체검색</option>
+                            <option {{ 'selected' if request.args.get("search_option")|e == 'brand_name' }} value="brand_name">브랜드명</option>
+                            <option {{ 'selected' if request.args.get("search_option")|e == 'country_name' }} value="country_name">국가</option>
+                        </select>
+                    </th>
+                    <td>
+                        <input name="brand_search_text" type="text" value="{{ request.args.get('brand_search_text', '')|e }}" style="width: 80%;" />
+                    </td>
+                    <th>등록일</th>
+                    <td><input type="text" readonly name="search_start_day" value="{{ request.args.get('search_start_day', '')|e }}" data-search-start-day></td>
+                    <th>~</th>
+                    <td><input type="text" readonly name="search_end_day" value="{{ request.args.get('search_end_day', '')|e }}" data-search-end-day></td>
+                    <td>
+                        <button type="button" data-action-btn="search">검색</button>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="page" data-page value="{{ car_brand_list.page }}">
+            <input type="hidden" name="per_page" data-per-page-submit value="" />
+            <input type="hidden" name="action_type" data-action-type value="search"/>
+        </form>
+    </div>
+
+    <!--버튼들-->
+    <div class="table_info">
+        <div class="fl">조회수량 : <b>{{ '{0:,}'.format(car_brand_list.total)  }}</b>건</div><!-- 1000단위마다 콤마 찍는 포멧 -->
+        <br>
+        <br>
+        <div class="fr">
+            <a href="javascript:window.open('{{ url_for('CpAdminView:car_brand_add_page') }}', '', 'top=0,left=0,width=930,height=530,location=no');" class="btn" style="background-color: red;">신규등록</a>
+            <a href="javascript:void(0);" class="btn submit" data-action-btn="excel_download" style="background-color: green;">엑셀다운로드</a>
+            <select data-per-page-select >
+                <option {{ 'selected' if request.args.get("per_page")|e == '10' }} value="10">10개씩 보기</option>
+                <option {{ 'selected' if request.args.get("per_page")|e == '50' }} value="50">50개씩 보기</option>
+                <option {{ 'selected' if request.args.get("per_page")|e == '100' }} value="100">100개씩 보기</option>
+            </select>
+            <a href="javascript:void(0);" class="btn" data-car-brand-delete-btn >삭제</a>
+        </div>
+    </div>
+
+    <!--브랜드 리스트-->
+    <table class="basic_table">
+        <colgroup>
+                <col width="5%" />
+                <col width="17%" />
+                <col width="17%" />
+                <col width="17%" />
+                <col width="17%" />
+                <col width="17%" />
+                <col />
+            </colgroup>
+        <thead>
+        <tr>
+            <th>선택<input data-check-all type="checkbox"> </th> <!-- todo 왜여기 value가 1인가 -->
+            <th>브랜드 번호</th>
+            <th>브랜드명</th>
+            <th>국가</th>
+            <th>로고이미지</th>
+            <th>등록일</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <form name="car_brand_list" method="POST" data-validate-form="security" action="{{ url_for('CpAdminView:car_brand_delete') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <tbody>
+                {% for car_brand in car_brand_list.items %}
+                    <tr>
+                        <td>
+                            <input data-checkbox-brand name="brand_id" type="checkbox" value="{{ car_brand.id }}">
+                        </td>
+                        <td>{{ car_brand.id }}</td>
+                        <td>{{ car_brand.name|e }}</td>
+                        <td>{{ car_brand.code_country.name_ko|e }}</td>
+                        <td height="80px"><img src="{{ car_brand.car_brand_image_upload_file.thumb_url }}" style="height: 100%;"></td>
+                        <td>{{ car_brand.registered_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <button type="button" onclick="window.open('{{ url_for('CpAdminView:car_brand_update_page', brand_id=car_brand.id) }}', '', 'top=0,left=0,width=930,height=830,location=no');">관리</button>
+                            <!-- window.open(url, name, specs, replace);-->
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                    {{ macro.no_content_to_show_td(colspan="7", class="text-center", padding=15, font_weight='bold') }}
+                    </tr>
+                {% endfor %}
+
+
+            </tbody>
+        </form>
+    </table>
+
+    <hr class="br"/>
+    <div class="row text-center">
+        {{ macro.render_pagination(car_brand_list, 'go_to_page')  }}
+    </div>
+
+{% endblock %}

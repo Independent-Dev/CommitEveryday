@@ -1,0 +1,231 @@
+{% extends "cpadmin.layout.popup.html" %}
+
+{% block title %}
+PDF 다운로드
+{% endblock %}
+
+{% block sub_style %}
+{{ super() }}
+<style>
+    tr {
+       text-align: left;
+    }
+    /*@font-face {*/
+    /*            font-family: NanumGothic;*/
+    /*            src: url("{{ Font.font_src() }}");*/
+    /*        }*/
+
+</style>
+
+{%- endblock %}
+
+{% block sub_scripts %}
+    {{ super() }}
+<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+{%- endblock sub_scripts %}
+
+
+
+{% block content %}
+<h1>차량 정보</h1>
+        <div class="table_title">기본 정보</div>
+        <table class="basic_table al">
+            <colgroup>
+                <col width="15%" />
+                <col width="35%" />
+                <col width="15%" />
+                <col />
+            </colgroup>
+            <tbody>
+            <tr>
+                <th><span style="color: red">*</span>브랜드명</th>
+                <td>
+                    {{ car.car_brand.name }}
+                </td>
+                <th></th> <td></td>
+            </tr>
+            <tr>
+                <th><span style="color: red">*</span>차량명</th>
+                <td>{{ car.name }}</td>
+                <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                <th><span style="color: red">*</span>색상</th>
+                <td>
+                    {{ car.color.value }}
+                </td>
+            </tr>
+
+            <tr>
+                <th><span style="color: red">*</span>탑승인원</th>
+                <td>
+                    {{ car.passenger_count }}
+                </td>
+                <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                <th><span style="color: red">*</span>분류</th>
+                <td>
+                    {{ car.category.name }}
+                </td>
+            </tr>
+            <tr>
+                <th><span style="color: red">*</span>동력발생장치</th>
+                <td>
+                    {{ car.power_plant_device.value }}
+                </td>
+                <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                <th><span style="color: red">*</span>차량 출시일</th>
+                <td>
+                    {{ released_at[0] }}년 {{ released_at[1] }}월 {{ released_at[2] }}일
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <div class="table_title">동력정보</div>
+        {% if car.power_plant_device.name == 'ENGINE' %}
+        <div data-engine-div>
+            <table class="basic_table al">
+                <colgroup>
+                    <col width="15%" />
+                    <col width="35%" />
+                    <col width="15%" />
+                    <col />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <th><span style="color: red">*</span>엔진 변속</th>
+                    <td>
+                        {{ car.engine.engine_shift }}
+                    </td>
+                    <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                    <th><span style="color: red">*</span>자동 변속</th>
+                    <td>
+                        {{ car.engine.is_automatic.name|e }}
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div data-motor-div>
+            <table class="basic_table al">
+                <colgroup>
+                    <col width="15%" />
+                    <col width="35%" />
+                    <col width="15%" />
+                    <col />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <th><span style="color: red">*</span>충전 방식</th>
+                    <td>
+                        {{ car.motor.fill_method.name|e }}
+                    </td>
+                    <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                    <th><span style="color: red">*</span>급속충전시간</th>
+                    <td>
+                        {{ car.motor.boost_charge_time }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><span style="color: red">*</span>완속충전시간</th>
+                    <td>
+                        {{ car.motor.slow_charge_time }}
+                    </td>
+                    <th></th> <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <div class="table_title">편의사항</div>
+        <table class="basic_table al">
+            <colgroup>
+                <col width="15%" />
+                <col width="35%" />
+                <col width="15%" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>mobile 연동</th>
+                    <td>
+                        {{ car.has_mobile_linkage.name }}
+                    </td>
+                    <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                    <th>크루즈 컨트롤</th>
+                    <td>
+                        {{ car.has_cruise_control.name|e }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>열선 스티어링 휠</th>
+                   {{ car.has_heated_stering_wheel.name|e }}
+                    </td>
+                    <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                    <th>열선 시트</th>
+                    <td>
+                        {{ car.has_heated_sheet.name|e }}
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <div class="table_title">안전</div>
+        <table class="basic_table al">
+            <colgroup>
+                <col width="15%" />
+                <col width="35%" />
+                <col width="15%" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>에어백 갯수</th>
+                    <td>
+                        {{ car.airbag_count }}
+                    </td>
+                    <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                    <th>경사로 밀림방지</th>
+                    <td>
+                        {{ car.has_slope_safe.name|e }}
+                    </td>
+                </tr>
+
+                <tr>
+                   <th>급제동 경보</th>
+                    <td>
+                        {{ car.has_sudden_breaking_alarm.name|e }}
+                    </td>
+                    <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+                    <th>후방 감지</th>
+                    <td>
+                        {{ car.has_rear_sensor.name|e }}
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <div class="table_title">옵션</div>
+        <br>
+        <div data-option-area style="border: darkgray solid 1px; padding: 10px 10px">
+            <li style="list-style: none"><input type="text" name="option"></li>
+            {% for option in car.option_list %}
+            <li style="list-style: none"><input type="text" name="option" value="{{ option }}"></li>
+            {% endfor %}
+        </div>
+
+        <div class="table_title">차량이미지</div>
+        <div style="width: 400px; height: 100px; margin: 20px; padding: 10px 30px; border: darkgray solid 1px;">
+                {% for file in car.car_image_upload_file %}
+                {% if loop.index %4 ==1 %} <div> {% endif %}
+                    <img src="{{ file.thumb_path }}" style="margin: 10px auto; padding: 10px; width: 70%; height: 70%; ">
+                {% if loop.index %4 ==0 %} <div> {% endif %}
+                {% endfor %}
+        </div>
+            <!-- 여기서 data-validation-error-msg="필수항목입니다." 이걸 띄우려면 어떻게 해야하나...-->
+
+{% endblock %}

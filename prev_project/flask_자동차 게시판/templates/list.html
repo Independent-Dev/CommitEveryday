@@ -1,0 +1,239 @@
+{% extends "cpadmin.layout.popup.html" %}
+
+{% block title %}
+차량 조회
+{% endblock %}
+
+{% block sub_styles %}
+{{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='car/magnific-popup.css') }}" />
+{%- endblock sub_styles %}
+
+{% block sub_scripts %}
+    {{ super() }}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='car/jquery.magnific-popup.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bPopup/0.9.4/jquery.bpopup.min.js"></script>
+
+ <script>
+        // for paging
+        function go_to_page(page){
+            $('[data-page]').val(page);
+            $("[data-action-type]").val("search");
+            $('[data-search-form]').submit();
+        }
+
+        $(document).ready(function(){
+            // 차트에 들어갈 데이터 형식 정의.
+            var data_for_chart = {
+                    labels: [
+                        {% for brand in brand_list %}
+                            '{{ brand[0].name }}',
+                        {% endfor %}
+                    ],datasets: [{
+                            data: [
+                                {% for brand in brand_list %}
+                                    '{{ brand[1] }}',
+                                {% endfor %}
+                            ],backgroundColor: [
+                                'rgb(255, 99, 132)',  // red:
+                                'rgb(255, 159, 64)',  // orange:
+                                'rgb(255, 205, 86)',  // yellow:
+                                'rgb(75, 192, 192)',  // green:
+                                'rgb(54, 162, 235)',  // blue:
+                                'rgb(153, 102, 255)',  // purple:
+                                'rgb(201, 203, 207)',  // grey:
+                                'rgb(165, 42, 42)',  // brown:
+                                'rgb(225, 99, 71)',  // tomato:
+                                'rgb(210, 105, 30)',  // chocolate:
+                                'rgb(220, 20, 60)',  // crimson:
+                                'rgb(0, 215, 0)',  //lime:
+                                'rgb(128, 128, 0)',  // olive:
+                                'rgb(230, 230, 250)',  // lavender:
+                                'rgb(255, 192, 203)',  //pink:
+                                'rgb(238, 178, 238)'  //violet:
+                            ]
+                    }]
+            };
+
+            // <차트 보기> 버튼을 누르면 나오는 페이지.
+            $("[data-car-chart-show-btn]").click(function(){
+                var chartInstance = new Chart($('[data-car-chart]')[0].getContext('2d'), {
+                    type: 'pie',
+                    data: data_for_chart,
+                    options: {
+                        responsive: false,
+                        title: {
+                            display: true,
+                            text: "차량 브랜드 차트"
+                        }
+                    }
+                });
+            $('[data-car-chart]').bPopup();
+            });
+
+            // 차량 정보 검색 및 엑셀 다운로드
+            $("[data-action-btn]").click(function(){
+                document.search_form.action_type.value = $(this).attr('data-action-btn');
+                $('[data-per-page-submit]').val($('[data-per-page-select]').val());
+                document.search_form.submit();
+            });
+
+            // 이미지 팝업창
+            $('[data-pop-up]').click(function () {
+                var ti_form = new TIForm(false);
+                ti_form.add_hidden('car_id', $(this).attr('data-pop-up'));
+                var action_url = "{{ url_for('CpAdminView:car_image_popup') }}";
+                var result_json = ti_form.submit_ajax_get_return_json(action_url);
+                if(result_json.success){
+                    $('[data-pop-up-content]').magnificPopup({
+                            items: result_json.item,
+                            gallery: {
+                                enabled: true
+                            },
+                            type: 'image' // this is a default type
+                        });
+                    // 레이어 팝업창 띄우기.
+                    $('[data-pop-up-content]').trigger('click')
+                }else {
+                    alert('이미지를 로드하지 못했습니다.');
+                    return false;
+                }
+            });
+        });
+    </script>
+{%- endblock sub_scripts %}
+
+{% block content %}
+    <!-- 차량 검색 창 -->
+<div data-pdf>
+    <h1>차량 조회</h1>
+    <div class="flagbox">
+        <form name="search_form" data-search-form>
+            <table>
+                <colgroup>
+                    <col width="10%" />
+                    <col width="20%" />
+                    <col width="5%" />
+                    <col width="10%" />
+                    <col width="15%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="5%" />
+                    <col />
+                </colgroup>
+                <tr>
+                    <th>차량명</th>
+                    <td>
+                        <input name="car_name" type="text" style="width: 80%;"  value="{{ request.args.get('car_name', '')|e }}"/>
+                    </td>
+                    <th>분류</th>
+                    <td>
+                        <select name="car_category_search_option">
+                            <option value="">전체검색</option>
+                            {% for car_category in CarCategory %}
+                                <option {{ 'selected' if request.args.get("car_category_search_option")|e == car_category.name }} value="{{ car_category.name }}">{{ car_category.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <th>동력발생장치</th>
+                    <td>
+                        <select name="car_power_plant_device_search_option">
+                            <option value="">전체검색</option>
+                            {% for car_power_plant_device in CarPowerPlantDevice %}
+                                <option {{ 'selected' if request.args.get("car_power_plant_device_search_option")|e == car_power_plant_device.name }} value="{{ car_power_plant_device.name }}">{{ car_power_plant_device.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <th>크루즈<br>컨트롤</th>
+                    <td><input {{ 'checked' if request.args.get("has_cruise_control")|e == 'Y' }} type="checkbox" name="has_cruise_control" value="Y"></td>
+                    <td>
+                        <button type="button" data-action-btn='search'>검색</button>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="page" data-page value="{{ car_list.page }}">
+            <input type="hidden" name="per_page" data-per-page-submit value="" />
+            <input type="hidden" name="action_type" data-action-type value="search"/>
+        </form>
+    </div>
+
+    <!--버튼들-->
+    <div class="table_info">
+        <div class="fl">조회수량 : <b>{{ '{0:,}'.format(car_list.total) }}</b>건</div>
+        <br>
+        <br>
+        <div class="fr">
+            <a href="javascript:window.open('{{ url_for('CpAdminView:car_add_page') }}', '', 'top=0,left=0,width=930,height=1200,location=no');" class="btn" style="background-color: red;">신규등록</a>
+            <a href="javascript:void(0);" class="btn submit" data-action-btn="excel_download" style="background-color: green;">엑셀다운로드</a>
+            <a href="javascript:void(0);" class="btn" data-car-chart-show-btn >차트 보기</a>
+            <select data-per-page-select>
+                <option {{ 'selected' if request.args.get("per_page")|e == '10' }} value="10">10개씩 보기</option>
+                <option {{ 'selected' if request.args.get("per_page")|e == '50' }} value="50">50개씩 보기</option>
+                <option {{ 'selected' if request.args.get("per_page")|e == '100' }} value="100">100개씩 보기</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 차트 레이어 팝업을 위한 canvas -->
+    <canvas data-car-chart style="width: 600px; height: 600px; display: none;"></canvas>
+    <br>
+
+    <!-- 차량 리스트 -->
+    <table class="basic_table" >
+        <colgroup>
+            <col width="5%" />
+            <col width="15%" />
+            <col width="10%" />
+            <col width="15%" />
+            <col width="15%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="20%" />
+        </colgroup>
+        <thead>
+        <tr>
+            <th>차량<br>번호</th>
+            <th>차량명 </th>
+            <th>분류</th>
+            <th>차량이미지</th>
+            <th>동력발생장치</th>
+            <th>크루즈<br>컨트롤</th>
+            <th>에어백 개수</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for car in car_list.items %}
+                <tr>
+                    <td>{{ car.id|e}}</td>
+                    <td>{{ car.name|e }}</td>
+                    <td>{{ car.category.value }}</td>
+                    <td height="80px">
+                        <img src="{{ car.car_image_upload_file[0].thumb_url }}" data-pop-up="{{ car.id }}" height="100%">
+                    </td>
+                    <td>{{ car.power_plant_device.value|e }}</td>
+                    <td>{{ car.has_cruise_control.value|e }}</td>
+                    <td>{{ car.airbag_count|e }}</td>
+                    <td>
+                        <a href="javascript:window.open('{{ url_for('CpAdminView:car_update_page', car_id=car.id) }}', '', 'top=0,left=0,width=1130,height=1200,location=no');" class="btn">관리</a>
+                        <a class="btn submit" data-pdf-download-btn href="{{ url_for('CpAdminView:car_download_pdf', car_id=car.id) }}" style="background-color: orange;">PDF다운로드</a>
+                    </td>
+                </tr>
+            {% else %}
+            <tr>
+                {{ macro.no_content_to_show_td(colspan="8", class="text-center", padding=15, font_weight='bold') }}
+            </tr>
+            {% endfor %}
+        <!-- 데이터 팝업이 생성되는 div -->
+        <div data-pop-up-content></div>
+        </tbody>
+    </table>
+
+    <hr class="br"/>
+    <div class="row text-center">
+        {{ macro.render_pagination(car_list, 'go_to_page')  }}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,384 @@
+{% extends "cpadmin.layout.popup.html" %}
+
+{% block title %}
+차량 등록
+{% endblock %}
+
+{% block sub_styles %}
+{{ super() }}
+<style>
+    form[name=car_info] th span{
+        color: red;
+    }
+</style>
+{%- endblock sub_styles %}
+
+{% block sub_scripts %}
+    {{ super() }}
+    <script>
+        $(document).ready(function() {
+            // 동력발생장치 변경 시 나오는 로직. 기본값은 엔진이라 motor div를 hide
+            $('[data-motor-div]').toggle();
+            $('[data-power-plant-device]').change(function () {
+                if($(this).val()=="ENGINE") {
+                    $('[data-motor-div]').hide();
+                    $('[data-engine-div]').show();
+                }
+                else{
+                    $('[data-motor-div]').show();
+                    $('[data-engine-div]').hide();
+                }
+            });
+
+            // 달이 바뀌었을 때 해당 달의 일자를 가져오는 ajax.
+            $('[data-month], [data-year]').change(function(){
+
+                // 선택된 연도
+                var year = $('[data-year]').val();
+                // 선택된 달
+                var month = $('[data-month]').val();
+
+                // 연도 유효성 체크
+                if (isNullEmpty(year)){
+                    alert('연도를 선택하세요.');
+                    return false;
+                }
+
+                // 달 유효성 체크
+                if (isNullEmpty(month)){
+                    alert('월을 선택하세요.');
+                    return false;
+                }
+
+                // 일자를 초기화(추가된 옵션을 삭제)
+                $('[data-day] option').remove();
+
+                var ti_form = new TIForm(false);
+                ti_form.add_hidden("csrf_token", "{{ csrf_token() }}");
+                ti_form.add_hidden('year', year);
+                ti_form.add_hidden('month', month);
+
+                var action_url = "{{ url_for('CpAdminView:check_add_day') }}";
+                var result_json = ti_form.submit_ajax_get_return_json(action_url);
+
+                // ajax. 성공 시 해당 월의 일수만큼 옵션 append. 실패 시 메세지.
+                if(result_json.success){
+                    $('<option>').text('선택').appendTo($('[data-day]'));
+                    for(var day = 1; day<=result_json.day; day++){
+                    $('<option>').val(day).text((day<10) ? "0"+day : day).appendTo($('[data-day]'));
+                    }
+                    return false;
+                }else {
+                    alert(result_json.message);
+                    return false;
+                }
+            });
+
+            // 버튼 클릭 시 옵션 인풋 추가
+            $("[data-add]").click(function(){
+                var line = $('<li>')
+                $('<input>').attr('type', 'text').attr('name', 'option').appendTo(line);
+                $('<button>').text('삭제').css('margin', '10px').bind('click', function(){
+                    $(this).closest('li').remove();
+                }).appendTo(line);
+                line.appendTo($('[data-option-area]'));
+            });
+
+            // <정보등록> 버튼을 누르면 유효성 검사 후 정보 submit.
+            $("[data-add-action-btn]").click(function(){
+                var form_tag = $("form[name='car_info']"); // form name 더블체크 완료.
+                if(!form_tag.isValid() || !confirm("등록하시겠습니까?")){
+                    return;
+                }
+                var result_json = form_tag.ajax_form_submit_return_json();
+                if(result_json.success){
+                    alert("등록되었습니다.");
+                    window.opener.location.reload();
+                    window.close();
+                }else{
+                    // 서버에서 유효성 검사 한 결과
+                    $.each(JSON.parse(result_json["message"]),function(key,value) {
+                        alert(value);
+                    });
+                }
+            });
+
+        });
+    </script>
+
+
+{%- endblock sub_scripts %}
+
+{% block content %}
+<h1>차량 등록</h1>
+    <form name="car_info" method="POST" data-validate-form="security" action="{{ url_for('CpAdminView:car_add_action') }}"  enctype="multipart/form-data" method="post">
+        <div class="table_title">기본 정보</div>
+        <table class="basic_table al">
+            <colgroup>
+                <col width="15%" />
+                <col width="35%" />
+                <col width="15%" />
+                <col />
+            </colgroup>
+            <tbody>
+            <tr>
+                <th><span>*</span>브랜드명</th>
+                <td>
+                    <select name="brand_id" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                        <option value="">선택</option>
+                        {% for brand in brand_list %}
+                            <option value="{{ brand.id }}">{{ brand.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <th></th> <td></td>
+            </tr>
+            <tr>
+                <th><span>*</span>차량명</th>
+                <td><input type="text" name="name"></td>
+                <th><span>*</span>색상</th>
+                <td>
+                    <select name="color" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                        <option value="">선택</option>
+                        {% for car_color in CarColor %}
+                        <option value="{{ car_color.name }}">{{ car_color.value }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><span>*</span>차량 이미지</th>
+                <td><input type="text" data-car-image-file-name readonly onclick="$('[name=images]').trigger('click')"><button type="button" onclick="$('[name=images]').trigger('click')">파일 찾기</button>
+                <input type="file" multiple name="images" style="display:none;"  onchange="$('[data-car-image-file-name]').val($(this).val())"/></td>
+                <th></th>
+                <td></td>
+            </tr>
+            <tr>
+                <th><span>*</span>탑승인원</th>
+                <td>
+                    <select name="passenger_count" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                        <option value="">선택</option>
+                        <option value=4>4</option>
+                        <option value=5>5</option>
+                        <option value=7>7</option>
+                    </select>
+                </td>
+                <th><span>*</span>분류</th>
+                <td>
+                    <select name="category" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                        <option value="">선택</option>
+                        {% for car_category in CarCategory %}
+                        <option value="{{ car_category.name }}">{{ car_category.value }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><span>*</span>동력발생장치</th>
+                <td>
+                    <select data-power-plant-device name="power_plant_device" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                        <option value="">선택</option>
+                        {% for car_power_plant_device in CarPowerPlantDevice %}
+                        <option value="{{ car_power_plant_device.name }}">{{ car_power_plant_device.value }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+
+                <th><span>*</span>차량 출시일</th>
+                <td>
+                    <select name="released_at" data-validation="required" data-validation-error-msg="필수항목입니다." data-year>
+                        <option value="">선택</option>
+                        {% for year in range(current_year-10, current_year+10) %}
+                        <option value= {{ year }} > {{ year }} </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="released_at" data-validation="required" data-validation-error-msg="필수항목입니다." data-month>
+                        <option value="">선택</option>
+                        {% for month in range(1, 13) %}
+                        <option value= {{ month }} >{{ "{0:0>2}".format(month) }} </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="released_at" data-validation="required" data-validation-error-msg="필수항목입니다." data-day>
+                        <option value="">선택</option>
+                    </select>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <div class="table_title">동력정보</div>
+        <!----------엔진--------->
+        <div data-engine-div data-power-common>
+            <table class="basic_table al">
+                <colgroup>
+                    <col width="15%" />
+                    <col width="35%" />
+                    <col width="15%" />
+                    <col />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <th><span>*</span>엔진 변속</th>
+                    <td>
+                        <select name="engine_shift" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                        </select>
+                    </td>
+                    <th><span>*</span>자동 변속</th>
+                    <td>
+                        <select name="is_automatic" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">자동</option>
+                            <option value="N">수동</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!----------모터--------->
+        <div data-motor-div data-power-common>
+            <table class="basic_table al">
+                <colgroup>
+                    <col width="15%" />
+                    <col width="35%" />
+                    <col width="15%" />
+                    <col />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <th><span>*</span>충전 방식</th>
+                    <td>
+                        <select name="fill_method" data-validation="required" data-validation-error-msg="필수항목입니다." style="width: 57%">
+                            <option value="">선택</option>
+                            {% for fill_method in FillMethod %}
+                                <option value="{{ fill_method.name }}">{{ fill_method.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <th><span>*</span>급속충전시간</th>
+                    <td>
+                        <input name="boost_charge_time" type="text" data-validation="number">
+                    </td>
+                </tr>
+                <tr>
+                    <th><span>*</span>완속충전시간</th>
+                    <td>
+                        <input name="slow_charge_time" type="text" data-validation="number" >
+                    </td>
+                    <th></th> <td></td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <!----------편의사항--------->
+        <div class="table_title">편의사항</div>
+        <table class="basic_table al">
+            <colgroup>
+                <col width="15%" />
+                <col width="35%" />
+                <col width="15%" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>mobile 연동</th>
+                    <td>
+                        <select name="has_mobile_linkage" style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">네</option>
+                            <option value="N">아니오</option>
+                        </select>
+                    </td>
+                    <th>크루즈 컨트롤</th>
+                    <td>
+                        <select name="has_cruise_control" style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">네</option>
+                            <option value="N">아니오</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>열선 스티어링 휠</th>
+                   <td>
+                        <input name="has_heated_stering_wheel" type="checkbox" value="Y">
+                    </td>
+                    <th>열선 시트</th>
+                    <td>
+                        <select name="has_heated_sheet" style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">네</option>
+                            <option value="N">아니오</option>
+                        </select>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <div class="table_title">안전</div>
+        <table class="basic_table al">
+            <colgroup>
+                <col width="15%" />
+                <col width="35%" />
+                <col width="15%" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>에어백 갯수</th>
+                    <td>
+                        <input type="text" name="airbag_count" data-validation="number" data-validation-allowing="range[0;10]" value = "0" style="width: 50%;">
+                    </td>
+                    <th>경사로 밀림방지</th>
+                    <td>
+                        <select name="has_slope_safe" data-validation="" style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">네</option>
+                            <option value="N">아니오</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                   <th>급제동 경보</th>
+                    <td>
+                        <select name="has_sudden_breaking_alarm" style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">네</option>
+                            <option value="N">아니오</option>
+                        </select>
+                    </td>
+                    <th>후방 감지</th>
+                    <td>
+                        <select name="has_rear_sensor" style="width: 57%">
+                            <option value="">선택</option>
+                            <option value="Y">네</option>
+                            <option value="N">아니오</option>
+                        </select>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <div class="table_title">옵션</div>
+        <br>
+        <ul data-option-area style="border: darkgray solid 1px; padding: 10px 10px">
+            <li style="list-style: none"><input type="text" name="option">&nbsp;&nbsp;<a href="javascript:void(0)" data-add class="btn" >추가</a></li>
+        </ul>
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    </form>
+    <div class="table_btn">
+        <a href="javascript:void(0);" class="btnB submit" data-add-action-btn>정보등록</a>
+    </div>
+
+{% endblock %}
